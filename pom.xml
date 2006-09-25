@@ -147,14 +147,35 @@
       <url>http://ibiblio.org/maven2/</url>
     </repository>
     <repository>
+      <id>apache.incubating.releases</id>
+      <name>Apache Incubating Release Distribution Repository</name>
+      <url>http://people.apache.org/repo/m2-incubating-repository</url>
+    </repository>
+    <repository>
       <id>apache.snapshots</id>
-      <name>Apache Snapshot Repository</name>
+      <name>Apache Development Snapshot Repository</name>
       <url>http://people.apache.org/repo/m2-snapshot-repository</url>
       <releases>
         <enabled>false</enabled>
       </releases>
     </repository>
   </repositories>
+      
+  <pluginRepositories>
+    <pluginRepository>
+      <id>apache.incubating.releases</id>
+      <name>Apache Incubating Release Distribution Repository</name>
+      <url>http://people.apache.org/repo/m2-incubating-repository</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>apache.snapshots</id>
+      <name>Apache Development Snapshot Repository</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
 
   <distributionManagement>
     <repository>
