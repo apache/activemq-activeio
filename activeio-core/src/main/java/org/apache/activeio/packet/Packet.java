@@ -21,14 +21,12 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.activeio.Adaptable;
-
 /**
  * Provides a ByteBuffer like interface to work with IO channel packets of data.
  * 
  * @version $Revision$
  */
-public interface Packet extends Adaptable {
+public interface Packet {
     
     public int position();
     public void position(int position);
@@ -47,6 +45,12 @@ public interface Packet extends Adaptable {
     
     public ByteSequence asByteSequence();
     public byte[] sliceAsBytes();
+    
+    /**
+     *  @Return object that is an instance of requested type and is associated this this object.  May return null if no 
+     *  object of that type is associated.
+     */
+    Object getAdapter(Class target);
     
     
     /**
