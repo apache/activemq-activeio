@@ -22,7 +22,7 @@
 
   <groupId>org.apache.activemq</groupId>
   <artifactId>activeio-parent</artifactId>
-  <version>3.x-incubator-SNAPSHOT</version>
+  <version>3.0-incubator</version>
   <packaging>pom</packaging>
   <name>ActiveIO</name>
   <description></description>
