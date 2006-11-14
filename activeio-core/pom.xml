@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.activemq</groupId>
     <artifactId>activeio-parent</artifactId>
-    <version>3.0-incubator</version>
+    <version>3.0.0-incubator</version>
   </parent>
 
   <artifactId>activeio-core</artifactId>
