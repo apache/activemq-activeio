@@ -17,7 +17,7 @@
  */
 package org.apache.activeio.stats;
 
-import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.j2ee.statistics.CountStatistic;
 

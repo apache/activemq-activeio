@@ -22,7 +22,7 @@
 
   <groupId>org.apache.activemq</groupId>
   <artifactId>activeio-parent</artifactId>
-  <version>3.0-incubator</version>
+  <version>3.1-incubator-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ActiveIO</name>
   <description></description>
@@ -101,11 +101,6 @@
         <artifactId>commons-logging</artifactId>
         <version>${commons-logging-version}</version>
       </dependency>
-      <dependency>
-        <groupId>backport-util-concurrent</groupId>
-        <artifactId>backport-util-concurrent</artifactId>
-        <version>${backport-util-concurrent-version}</version>
-      </dependency>
 
     </dependencies>
   </dependencyManagement>
@@ -118,7 +113,6 @@
     <log4j-version>1.2.12</log4j-version>
     <mx4j-version>2.1.1</mx4j-version>
     <commons-logging-version>1.1</commons-logging-version>
-    <backport-util-concurrent-version>2.1</backport-util-concurrent-version>
 
     <m1-dist-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-dist-repo-url>
     <dist-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m2-incubating-repository</dist-repo-url>

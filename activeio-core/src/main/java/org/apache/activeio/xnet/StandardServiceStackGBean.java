@@ -17,7 +17,7 @@
  */
 package org.apache.activeio.xnet;
 
-import edu.emory.mathcs.backport.java.util.concurrent.Executor;
+import java.util.concurrent.Executor;
 
 import org.apache.activeio.xnet.hba.IPAddressPermission;
 import org.apache.geronimo.gbean.GBeanData;
