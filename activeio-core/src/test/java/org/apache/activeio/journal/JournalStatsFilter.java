@@ -40,6 +40,9 @@ public class JournalStatsFilter implements Journal {
 	private final TimeStatisticImpl unsynchedWriteLatency = new TimeStatisticImpl(writeLatency, "unsynchedWriteLatency", "The amount of time that is spent waiting for a non synch record to be written to the Journal"); 	
 	private final TimeStatisticImpl readLatency = new TimeStatisticImpl("readLatency", "The amount of time that is spent waiting for a record to be read from the Journal"); 
 	private final CountStatisticImpl readBytesCounter = new CountStatisticImpl("readBytesCounter","The number of bytes that have been read by the Journal");
+	private final CountStatisticImpl readRecordsCounter = new CountStatisticImpl("readRecordsCounter","The number of records that have been read by the Journal");
+	private final TimeStatisticImpl cursorLatency = new TimeStatisticImpl("nextRecordLocationLatency", "The amount of time that is spent waiting to locate the next record location from the Journal"); 
+	private final CountStatisticImpl cursorCounter = new CountStatisticImpl("nextRecordLocationCounter","The number of times the the next record was located in the Journal");
 	
 	private final Journal next;
 	private boolean detailedStats;
@@ -81,6 +84,7 @@ public class JournalStatsFilter implements Journal {
 		Packet answer = next.read(location);		
 		long end = System.currentTimeMillis();
 		
+		readRecordsCounter.increment();
 		readBytesCounter.add(answer.remaining());
 		readLatency.addTime(end-start);
 		return answer;
@@ -119,8 +123,15 @@ public class JournalStatsFilter implements Journal {
 	 * @see org.codehaus.activemq.journal.Journal#getNextRecordLocation(org.codehaus.activemq.journal.RecordLocation)
 	 */
 	public RecordLocation getNextRecordLocation(RecordLocation lastLocation)
-			throws IOException, InvalidRecordLocationException {		
-		return next.getNextRecordLocation(lastLocation);
+			throws IOException, InvalidRecordLocationException {	
+		
+		long start = System.currentTimeMillis();
+		RecordLocation rc = next.getNextRecordLocation(lastLocation);
+		long end = System.currentTimeMillis();
+		
+		cursorCounter.increment();
+		cursorLatency.addTime(end-start);
+		return rc;
 	}
 	
 	/**
@@ -133,11 +144,17 @@ public class JournalStatsFilter implements Journal {
         out.println("Journal Stats {");        
         out.incrementIndent();
         out.printIndent();
-        out.println("Throughput           : "+ getThroughputKps() +" k/s and " + getThroughputRps() +" records/s" );
+        out.println("Write Throughput           : "+ getWriteThroughputKps() +" k/s and " + getWriteThroughputRps() +" records/s" );
         out.printIndent();
-        out.println("Latency with force   : "+ getAvgSyncedLatencyMs() +" ms"  );
+        out.println("Write Latency with force   : "+ getAvgSyncedLatencyMs() +" ms"  );
         out.printIndent();
-        out.println("Latency without force: "+ getAvgUnSyncedLatencyMs() +" ms"  );
+        out.println("Write Latency without force: "+ getAvgUnSyncedLatencyMs() +" ms"  );
+        out.printIndent(); 
+        out.println("Read Throughput            : "+ getReadThroughputKps() +" k/s and " + getReadThroughputRps() +" records/s" );
+        out.printIndent();
+        out.println("Read Latency               : "+getAvgReadLatencyMs()+" ms" );
+        out.printIndent();
+        out.println("Cursor Latency             : "+ getAvgCursorLatencyMs() +" ms"  );
 
         out.printIndent();
         out.println("Raw Stats {");
@@ -186,11 +203,18 @@ public class JournalStatsFilter implements Journal {
 			StringWriter w = new StringWriter();
 			PrintWriter pw = new PrintWriter(w);
 			IndentPrinter out = new IndentPrinter(pw, "  ");
-	        out.println("Throughput           : "+ getThroughputKps() +" k/s and " + getThroughputRps() +" records/s");
 	        out.printIndent();
-	        out.println("Latency with force   : "+getAvgSyncedLatencyMs()+" ms"  );
+	        out.println("Write Throughput           : "+ getWriteThroughputKps() +" k/s and " + getWriteThroughputRps() +" records/s");
 	        out.printIndent();
-	        out.println("Latency without force: "+getAvgUnSyncedLatencyMs()+" ms"  );
+	        out.println("Write Latency with force   : "+getAvgSyncedLatencyMs()+" ms"  );
+	        out.printIndent();
+	        out.println("Write Latency without force: "+getAvgUnSyncedLatencyMs()+" ms"  );
+	        out.printIndent();
+	        out.println("Read Throughput            : "+ getReadThroughputKps() +" k/s and " + getReadThroughputRps() +" records/s");
+	        out.printIndent();
+	        out.println("Read Latency               : "+getAvgReadLatencyMs()+" ms" );
+	        out.printIndent();
+	        out.println("Cursor Latency       : "+ getAvgCursorLatencyMs() +" ms"  );
 			return w.getBuffer().toString();			
 		}
     }
@@ -209,7 +233,7 @@ public class JournalStatsFilter implements Journal {
 	 * 
 	 * @return the average throughput in k/s.
 	 */
-	public double getThroughputKps() {
+	public double getWriteThroughputKps() {
 		 long totalTime = writeBytesCounter.getLastSampleTime()-writeBytesCounter.getStartTime(); 
 		 return (((double)writeBytesCounter.getCount()/(double)totalTime)/(double)1024)*1000;
 	}
@@ -219,9 +243,29 @@ public class JournalStatsFilter implements Journal {
 	 * 
 	 * @return the average throughput in records/s.
 	 */
-	public double getThroughputRps() {
+	public double getWriteThroughputRps() {
 		 long totalTime = writeRecordsCounter.getLastSampleTime()-writeRecordsCounter.getStartTime(); 
 		 return (((double)writeRecordsCounter.getCount()/(double)totalTime))*1000;
+	}
+
+	/**
+	 * Gets the average throughput in k/s.
+	 * 
+	 * @return the average throughput in k/s.
+	 */
+	public double getReadThroughputKps() {
+		 long totalTime = readBytesCounter.getLastSampleTime()-readBytesCounter.getStartTime(); 
+		 return (((double)readBytesCounter.getCount()/(double)totalTime)/(double)1024)*1000;
+	}
+
+	/**
+	 * Gets the average throughput in records/s.
+	 * 
+	 * @return the average throughput in records/s.
+	 */
+	public double getReadThroughputRps() {
+		 long totalTime = readRecordsCounter.getLastSampleTime()-readRecordsCounter.getStartTime(); 
+		 return (((double)readRecordsCounter.getCount()/(double)totalTime))*1000;
 	}
 
 	/**
@@ -238,8 +282,26 @@ public class JournalStatsFilter implements Journal {
 	 * 
 	 * @return the average sync write latency in ms.
 	 */
+	public double getAvgCursorLatencyMs() {
+		return cursorLatency.getAverageTime();
+	}
+
+	/**
+	 * Gets the average sync write latency in ms.
+	 * 
+	 * @return the average sync write latency in ms.
+	 */
 	public double getAvgSyncedLatencyMs() {
 		return synchedWriteLatency.getAverageTime();
+	}
+
+	/**
+	 * Gets the average read latency in ms.
+	 * 
+	 * @return the average sync write latency in ms.
+	 */
+	public double getAvgReadLatencyMs() {
+		return readLatency.getAverageTime();
 	}
 
 	/**

@@ -22,12 +22,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.activeio.journal.InvalidRecordLocationException;
 import org.apache.activeio.journal.Journal;
 import org.apache.activeio.journal.JournalEventListener;
 import org.apache.activeio.journal.RecordLocation;
 import org.apache.activeio.packet.ByteArrayPacket;
+import org.apache.activeio.packet.Packet;
 
 /**
  * Provides the base class uses to run performance tests against a Journal.
@@ -35,12 +37,13 @@ import org.apache.activeio.packet.ByteArrayPacket;
  * 
  * @version $Revision: 1.1 $
  */
-abstract public class JournalPerfToolSupport implements JournalEventListener {
+abstract public class JournalRWPerfToolSupport implements JournalEventListener {
 
 	private JournalStatsFilter journal;
 	private Random random = new Random();
 	private byte data[];
-	private int workerCount=0;	
+	private int writeWorkerCount=0;	
+	private int readWorkerCount=0;
 	private PrintWriter statWriter;
 	// Performance test Options
 	
@@ -49,17 +52,22 @@ abstract public class JournalPerfToolSupport implements JournalEventListener {
 	protected File statCSVFile = new File("stats.csv");;
 
 	// Controls how often we start a new batch of workers.
-	protected int workerIncrement=5;
+	protected int writeWorkerIncrement=5;
+	protected int initialWriteWorkers=5;
+	protected int readWorkerThinkTime=0;
+	
+	protected int readWorkerIncrement=5;
+	protected int initialReadWorkers=5;
+	protected int writeWorkerThinkTime=0;
+	
 	protected long incrementDelay=1000*20;
 	protected boolean verbose=true;
-	protected int initialWorkers=10;
 
 	// Worker configuration.
 	protected int recordSize=1024;
 	protected int syncFrequency=15;	
-	protected int workerThinkTime=100;
 
-    private final class Worker implements Runnable {
+    private final class WriteWorker implements Runnable {
 		public void run() {
 			int i=random.nextInt()%syncFrequency;
 			while(true) {
@@ -70,7 +78,7 @@ abstract public class JournalPerfToolSupport implements JournalEventListener {
 				}				
 				try {
 					journal.write(new ByteArrayPacket(data), sync);
-					Thread.sleep(workerThinkTime);
+					Thread.sleep(writeWorkerThinkTime);
 				} catch (Exception e) {
 					e.printStackTrace();
 					return;
@@ -79,14 +87,34 @@ abstract public class JournalPerfToolSupport implements JournalEventListener {
 			}					
 		}
 	}	
-	
+
+    
+    private final class ReadWorker implements Runnable {
+    	
+    	AtomicLong counter=new AtomicLong();
+		public void run() {
+			while(true) {
+				try {
+					RecordLocation pos = null;
+					while( (pos=journal.getNextRecordLocation(pos))!=null ) {
+						Packet packet = journal.read(pos);
+						counter.addAndGet(packet.limit());
+						Thread.sleep(readWorkerThinkTime);
+					}
+				} catch (Throwable e) {
+					e.printStackTrace();
+				}
+			}					
+		}
+	}	
+
     /**
      * @throws IOException
 	 * 
 	 */
 	protected void exec() throws Exception {
 		
-		System.out.println("Client threads write records using: Record Size: "+recordSize+", Sync Frequency: "+syncFrequency+", Worker Think Time: "+workerThinkTime);
+		System.out.println("Client threads write records using: Record Size: "+recordSize+", Sync Frequency: "+syncFrequency+", Worker Think Time: "+readWorkerThinkTime);
 
 		// Create the record and fill it with some values.
 		data = new byte[recordSize];
@@ -96,7 +124,7 @@ abstract public class JournalPerfToolSupport implements JournalEventListener {
 		
 		if( statCSVFile!=null ) {
 			statWriter = new PrintWriter(new FileOutputStream(statCSVFile));
-			statWriter.println("Threads,Throughput (k/s),Forcd write latency (ms),Throughput (records/s)");
+			statWriter.println("Threads,Write Throughput (k/s),Forced Write latency (ms), Write Throughput (records/s),Read Throughput (k/s),Read latency (ms),Read Throughput (records/s)");
 		}
 		
         if( journalDirectory.exists() ) {
@@ -107,12 +135,18 @@ abstract public class JournalPerfToolSupport implements JournalEventListener {
 		
         try {        	
         	
-    		System.out.println("Starting "+initialWorkers+" Workers...");
-        	for(int i=0;i <initialWorkers;i++) {
-            	new Thread(new Worker()).start();
-            	workerCount++;
+    		System.out.println("Starting "+initialWriteWorkers+" Write Workers...");
+        	for(int i=0;i <initialWriteWorkers;i++) {
+            	new Thread(new WriteWorker()).start();
+            	writeWorkerCount++;
         	}
-        	
+
+    		System.out.println("Starting "+initialReadWorkers+" Read Workers...");
+        	for(int i=0;i <initialReadWorkers;i++) {
+            	new Thread(new ReadWorker()).start();
+            	readWorkerCount++;
+        	}
+
         	// Wait a little to see the worker affect the stats.
         	// Increment the number of workers every few seconds.
         	while(true) {
@@ -122,10 +156,10 @@ abstract public class JournalPerfToolSupport implements JournalEventListener {
             	displayStats();
             	journal.reset();
 
-            	System.out.println("Starting "+workerIncrement+" Workers...");
-            	for(int i=0;i <workerIncrement;i++) {
-                	new Thread(new Worker()).start();
-                	workerCount++;
+            	System.out.println("Starting "+writeWorkerIncrement+" Workers...");
+            	for(int i=0;i <writeWorkerIncrement;i++) {
+                	new Thread(new WriteWorker()).start();
+                	writeWorkerCount++;
             	}
         	}
         	
@@ -136,10 +170,18 @@ abstract public class JournalPerfToolSupport implements JournalEventListener {
 	}
 
 	private void displayStats() {		
-		System.out.println("Stats at "+workerCount+" workers.");
+		System.out.println("Stats at "+writeWorkerCount+" write workers and "+readWorkerCount+" read workers.");
 		System.out.println(journal);        	
 		if( statWriter!= null ) {
-			statWriter.println(""+workerCount+","+journal.getWriteThroughputKps()+","+journal.getAvgSyncedLatencyMs()+","+journal.getWriteThroughputRps());
+			statWriter.println(
+					""+writeWorkerCount+","+
+					journal.getWriteThroughputKps()+","+
+					journal.getAvgSyncedLatencyMs()+","+
+					journal.getWriteThroughputRps()+","+
+					journal.getReadThroughputKps()+","+
+					journal.getAvgReadLatencyMs()+","+
+					journal.getReadThroughputRps()
+					);
 			statWriter.flush();
 		}
 	}

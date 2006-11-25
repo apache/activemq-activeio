@@ -44,7 +44,7 @@ public class JournalImplTest extends TestCase {
     int size = 1024*10;
     int logFileCount=2;
     File logDirectory = new File("test-logfile");
-	private Journal journal;
+	private JournalImpl journal;
     
     /**
      * @see junit.framework.TestCase#setUp()
@@ -133,6 +133,9 @@ public class JournalImplTest extends TestCase {
             journal.setMark(pos, false);
             
         } while( pos.getLogFileId() < 5 );
+        
+        Packet p = createPacket("<<<data>>>");
+        pos = (Location) journal.write( p, true);
         
         // Now see if we can read that first packet.
         Packet data;

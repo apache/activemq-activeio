@@ -21,25 +21,24 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.activeio.journal.Journal;
-import org.apache.activeio.journal.JournalPerfToolSupport;
-import org.apache.activeio.journal.active.JournalImpl;
+import org.apache.activeio.journal.JournalRWPerfToolSupport;
 
 /**
  * A Performance statistics gathering tool for the JournalImpl based Journal.
  * 
  * @version $Revision: 1.1 $
  */
-public class JournalPerfTool extends JournalPerfToolSupport {
+public class JournalRWPerfTool extends JournalRWPerfToolSupport {
 	
 	private int logFileSize = 1024*1024*50;
     private int logFileCount = 4;
 	
 	public static void main(String[] args) throws Exception {
-		JournalPerfTool tool = new JournalPerfTool();
-        tool.initialWorkers=10;
+		JournalRWPerfTool tool = new JournalRWPerfTool();
+        tool.initialWriteWorkers=10;
         tool.syncFrequency=15;
-        tool.workerIncrement=0;
-        tool.workerThinkTime=0;
+        tool.writeWorkerIncrement=0;
+        tool.writeWorkerThinkTime=0;
         tool.verbose=false;
         tool.incrementDelay=5*1000;
 
@@ -47,7 +46,7 @@ public class JournalPerfTool extends JournalPerfToolSupport {
 			tool.journalDirectory = new File(args[0]);
 		}
 		if( args.length > 1 ) {
-			tool.workerIncrement = Integer.parseInt(args[1]);
+			tool.writeWorkerIncrement = Integer.parseInt(args[1]);
 		}
 		if( args.length > 2 ) {
 			tool.incrementDelay = Long.parseLong(args[2]);
@@ -62,7 +61,7 @@ public class JournalPerfTool extends JournalPerfToolSupport {
 			tool.syncFrequency = Integer.parseInt(args[5]);
 		}
 		if( args.length > 6 ) {
-			tool.workerThinkTime = Integer.parseInt(args[6]);
+			tool.writeWorkerThinkTime = Integer.parseInt(args[6]);
 		}
 		if( args.length > 7 ) {
 			tool.logFileCount = Integer.parseInt(args[7]);
