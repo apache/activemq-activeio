@@ -267,7 +267,6 @@ final public class LogFileManager {
         if (disposed)
             return;
         this.disposed = true;
-        
         try {
 	        // Close all the opened log files.
 	        LogFileNode log = firstNode;
@@ -275,8 +274,12 @@ final public class LogFileManager {
 	            log.getLogFile().dispose();
 	            log = log.getNext();
 	        } while (log != firstNode);
-	        
-	        loadedFromCleanShutDown=true;
+
+            for (Object entry : openArchivedLogs.values()) {
+                ((LogFile)entry).dispose();
+            }
+
+            loadedFromCleanShutDown=true;
 	        storeState();
 	        controlFile.dispose();
         } catch ( IOException e ) {        	
@@ -342,7 +345,7 @@ final public class LogFileManager {
     }
     
     private File getArchiveFile(int logId) {
-        return  new File(archiveDirectory, "" + archiveLogNameFormat.format(logId) + ".log");
+        return new File(archiveDirectory, "" + archiveLogNameFormat.format(logId) + ".log");
     }
     
     RecordInfo readRecordInfo(Location location) throws IOException, InvalidRecordLocationException {

@@ -72,7 +72,7 @@ public class JournalImplTest extends TestCase {
 		journal.close();
         if( logDirectory.exists() )
         	deleteDir(logDirectory);
-        //assertTrue( !logDirectory.exists() );
+        assertTrue( !logDirectory.exists() );
     }
     
     public void testLogFileCreation() throws IOException {
