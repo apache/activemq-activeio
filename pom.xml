@@ -22,7 +22,7 @@
 
   <groupId>org.apache.activemq</groupId>
   <artifactId>activeio-parent</artifactId>
-  <version>3.1-incubator-SNAPSHOT</version>
+  <version>3.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ActiveIO</name>
   <description></description>
@@ -35,7 +35,7 @@
     <maven>2.0.4</maven>
   </prerequisites>
 
-  <url>http://incubator.apache.org/activemq/</url>
+  <url>http://activemq.apache.org/</url>
   <organization>
     <name>Apache Software Foundation</name>
     <url>http://www.apache.org/</url>
@@ -114,8 +114,8 @@
     <mx4j-version>2.1.1</mx4j-version>
     <commons-logging-version>1.1</commons-logging-version>
 
-    <m1-dist-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-dist-repo-url>
-    <dist-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m2-incubating-repository</dist-repo-url>
+    <m1-dist-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-dist-repo-url>
+    <dist-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</dist-repo-url>
     <site-repo-url>scpexe://people.apache.org/www/incubator.apache.org/activemq/activeio-maven/</site-repo-url>
   </properties>
 
@@ -193,9 +193,9 @@
   </distributionManagement>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/incubator/activemq/activeio/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/activemq/activeio/trunk</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/incubator/activemq/activeio/trunk</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/activemq/activeio/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/activemq/activeio/trunk</developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/activemq/activeio/trunk</url>
   </scm>
 
   <build>
