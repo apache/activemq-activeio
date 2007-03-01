@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.activeio.adapter.PacketOutputStream;
 import org.apache.activeio.adapter.PacketToInputStream;
@@ -275,8 +276,9 @@ final public class LogFileManager {
 	            log = log.getNext();
 	        } while (log != firstNode);
 
-            for (Object entry : openArchivedLogs.values()) {
-                ((LogFile)entry).dispose();
+			Iterator iter = openArchivedLogs.values().iterator();
+			while (iter.hasNext()) {
+			    ((LogFile)iter.next()).dispose();
             }
 
             loadedFromCleanShutDown=true;

@@ -31,7 +31,7 @@
   <build>
     <plugins>
 
-      <!-- Use 1.5 compiler setting -->
+<!--
      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -40,7 +40,7 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-
+-->
       <!-- generate the attached tests jar -->
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
