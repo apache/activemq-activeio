@@ -46,7 +46,6 @@ final public class ControlFile {
     private final ByteBufferPacket controlData;
     
     private final static boolean brokenFileLock = "true".equals(System.getProperty("java.nio.channels.FileLock.broken", "false"));
-    private final static boolean disableLocking = "true".equals(System.getProperty("org.apache.activeio.journal.active.DisableLocking", "false"));
 
     private long controlDataVersion=0;
     private FileLock lock;
@@ -68,21 +67,19 @@ final public class ControlFile {
      * @throws IOException 
      */
     public void lock() throws IOException {
-        if( disableLocking )
-            return;
-        Set set = getVmLockSet();
-        synchronized (set) {
-            if (lock == null) {
-                if (!set.add(canonicalPath)) {
-                    throw new JournalLockedException("Journal is already opened by this application.");
-                }
 
-                if( !brokenFileLock ) {
-                    lock = channel.tryLock();
-                    if (lock == null) {
-                        set.remove(canonicalPath);
-                        throw new JournalLockedException("Journal is already opened by another application");
-                    }
+        Properties properties = System.getProperties();
+        synchronized(properties) {
+            String lockKey = "org.apache.activeio.journal.active.lockMap:"+canonicalPath;
+            if( properties.setProperty(lockKey, "true")!=null ) {
+                throw new JournalLockedException("Journal is already opened by this application.");
+            }
+
+            if( !brokenFileLock ) {
+                lock = channel.tryLock();
+                if (lock == null) {
+                   properties.remove(lockKey);
+                   throw new JournalLockedException("Journal is already opened by another application");
                 }
             }
         }
@@ -94,33 +91,17 @@ final public class ControlFile {
      * @throws IOException
      */
     public void unlock() throws IOException {
-        if( disableLocking )
-            return;
-        
-        Set set = getVmLockSet();
-        synchronized (set) {
+
+        Properties properties = System.getProperties();
+        synchronized(properties) {
             if (lock != null) {
-                set.remove(canonicalPath);
+                String lockKey = "org.apache.activeio.journal.active.lockMap:"+canonicalPath;
+                properties.remove(lockKey);
                 lock.release();
                 lock = null;
             }
         }
     }
-    
-    static private Set getVmLockSet() {
-        if ( lockSet == null ) { 
-            Properties properties = System.getProperties();
-            synchronized(properties) {
-                lockSet = (Set) properties.get("org.apache.activeio.journal.active.lockMap");
-                if( lockSet == null ) {
-                    lockSet = new HashSet();
-                }
-                properties.put("org.apache.activeio.journal.active.lockMap", lockSet);
-            }
-        }
-        return lockSet;
-    }
-
     
     public boolean load() throws IOException {
         long l = file.length();
