@@ -16,13 +16,18 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+  <parent>
+    <groupId>org.apache</groupId>
+    <artifactId>apache</artifactId>
+    <version>3</version>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.activemq</groupId>
   <artifactId>activeio-parent</artifactId>
-  <version>3.1-SNAPSHOT</version>
+  <version>3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ActiveIO</name>
   <description></description>
@@ -32,7 +37,7 @@
   </modules>
 
   <prerequisites>
-    <maven>2.0.4</maven>
+    <maven>2.0.7</maven>
   </prerequisites>
 
   <url>http://activemq.apache.org/</url>
@@ -52,9 +57,9 @@
   <mailingLists>
     <mailingList>
       <name>Development List</name>
-      <subscribe>activemq-dev@geronimo.apache.org</subscribe>
-      <unsubscribe>activemq-dev@geronimo.apache.org</unsubscribe>
-      <post>activemq-dev@geronimo.apache.org</post>
+      <subscribe>dev-subscribe@activemq.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@activemq.apache.org</unsubscribe>
+      <post>dev@activemq.apache.org</post>
     </mailingList>
   </mailingLists>
 
@@ -102,6 +107,11 @@
         <version>${commons-logging-version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>backport-util-concurrent</groupId>
+        <artifactId>backport-util-concurrent</artifactId>
+        <version>${backport-util-concurrent-version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -113,12 +123,13 @@
     <log4j-version>1.2.12</log4j-version>
     <mx4j-version>2.1.1</mx4j-version>
     <commons-logging-version>1.1</commons-logging-version>
+    <backport-util-concurrent-version>2.1</backport-util-concurrent-version>
 
-    <m1-dist-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-dist-repo-url>
-    <dist-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</dist-repo-url>
-    <site-repo-url>scpexe://people.apache.org/www/incubator.apache.org/activemq/activeio-maven/</site-repo-url>
+    <!--<dist-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</dist-repo-url>-->
+    <!--<site-repo-url>scpexe://people.apache.org/www/incubator.apache.org/activemq/activeio-maven/</site-repo-url>-->
   </properties>
 
+<!--
   <ciManagement>
     <system>continuum</system>
     <url>http://ci.gbuild.org/continuum</url>
@@ -138,7 +149,9 @@
       </notifier>
     </notifiers>
   </ciManagement>
+-->
 
+<!--
   <repositories>
     <repository>
       <id>central</id>
@@ -158,7 +171,9 @@
       </releases>
     </repository>
   </repositories>
-      
+-->
+
+<!--
   <pluginRepositories>
     <pluginRepository>
       <id>apache.incubating.releases</id>
@@ -174,6 +189,7 @@
       </releases>
     </pluginRepository>
   </pluginRepositories>
+-->
 
   <distributionManagement>
     <repository>
@@ -215,22 +231,6 @@
           <outputDirectory>${basedir}/eclipse-classes</outputDirectory>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-one-plugin</artifactId>
-        <version>1.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>install-maven-one-repository</goal>
-              <goal>deploy-maven-one-repository</goal>
-            </goals>
-            <configuration>
-              <remoteRepositoryId>apache.m1.releases</remoteRepositoryId>
-              <remoteRepositoryUrl>${m1-dist-repo-url}</remoteRepositoryUrl>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
@@ -269,7 +269,7 @@
         <configuration>
           <links>
             <link>http://java.sun.com/j2ee/1.4/docs/api</link>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+            <!--<link>http://java.sun.com/j2se/1.5.0/docs/api</link>-->
           </links>
         </configuration>
       </plugin>

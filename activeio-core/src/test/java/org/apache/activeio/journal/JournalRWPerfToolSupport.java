@@ -22,7 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.activeio.journal.InvalidRecordLocationException;
 import org.apache.activeio.journal.Journal;

@@ -35,7 +35,7 @@ import org.apache.activeio.packet.ByteArrayPacket;
 import org.apache.activeio.packet.ByteBufferPacket;
 import org.apache.activeio.packet.Packet;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Provides a logical view of many separate files as one single long log file.

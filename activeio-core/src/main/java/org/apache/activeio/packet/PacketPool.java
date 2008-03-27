@@ -19,7 +19,7 @@ package org.apache.activeio.packet;
 
 import java.util.ArrayList;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Provides a simple pool of Packet objects.  When the packets that this pool produces are disposed,

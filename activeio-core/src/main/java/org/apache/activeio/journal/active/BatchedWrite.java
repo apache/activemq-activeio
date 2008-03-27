@@ -19,7 +19,7 @@ package org.apache.activeio.journal.active;
 
 import org.apache.activeio.packet.Packet;
 
-import java.util.concurrent.CountDownLatch;
+import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
 
 /**
  * This contains all the data needed to write and force a list of records to a
