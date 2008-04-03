@@ -117,6 +117,9 @@
   </dependencyManagement>
 
   <properties>
+    <siteId>activeio</siteId>
+    <projectName>Apache ActiveMQ ActiveIO</projectName>
+    
     <geronimo-version>1.0</geronimo-version>
     <howl-version>0.1.8</howl-version>
     <commons-beanutils-version>1.6.1</commons-beanutils-version>
@@ -139,14 +142,11 @@
   </properties>
 
   <distributionManagement>
-    <snapshotRepository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</url>
-    </snapshotRepository>
     <site>
       <id>apache.website</id>
-      <url>${site-repo-url}</url>
+      <!-- set the staging.siteURL in your ~/.m2/settings.xml in a release or other profile -->
+      <url>${staging.siteURL}/${siteId}/${version}</url>
+      <!--<url>${site-repo-url}</url>-->
     </site>
   </distributionManagement>
 
@@ -217,7 +217,7 @@
               </goals>
               <configuration>
                 <properties>
-                  <projectName>Apache ActiveMQ ActiveIO</projectName>
+                  <projectName>${projectName}</projectName>
                 </properties>
                 <resourceBundles>
                   <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
@@ -456,7 +456,7 @@
             <artifactId>maven-javadoc-plugin</artifactId>
             <inherited>true</inherited>
             <configuration>
-              <source>1.5</source>
+              <source>1.4</source>
             </configuration>
             <executions>
               <execution>
@@ -496,7 +496,7 @@
             <artifactId>maven-javadoc-plugin</artifactId>
             <inherited>true</inherited>
             <configuration>
-              <source>1.5</source>
+              <source>1.4</source>
             </configuration>
             <executions>
               <execution>
