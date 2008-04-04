@@ -16,13 +16,18 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+  <parent>
+    <groupId>org.apache</groupId>
+    <artifactId>apache</artifactId>
+    <version>4</version>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.activemq</groupId>
   <artifactId>activeio-parent</artifactId>
-  <version>3.1-SNAPSHOT</version>
+  <version>3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ActiveIO</name>
   <description></description>
@@ -32,7 +37,7 @@
   </modules>
 
   <prerequisites>
-    <maven>2.0.4</maven>
+    <maven>2.0.8</maven>
   </prerequisites>
 
   <url>http://activemq.apache.org/</url>
@@ -40,6 +45,7 @@
     <name>Apache Software Foundation</name>
     <url>http://www.apache.org/</url>
   </organization>
+  <inceptionYear>2005</inceptionYear>
 
   <licenses>
     <license>
@@ -52,9 +58,9 @@
   <mailingLists>
     <mailingList>
       <name>Development List</name>
-      <subscribe>activemq-dev@geronimo.apache.org</subscribe>
-      <unsubscribe>activemq-dev@geronimo.apache.org</unsubscribe>
-      <post>activemq-dev@geronimo.apache.org</post>
+      <subscribe>dev-subscribe@activemq.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@activemq.apache.org</unsubscribe>
+      <post>dev@activemq.apache.org</post>
     </mailingList>
   </mailingLists>
 
@@ -102,10 +108,20 @@
         <version>${commons-logging-version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>backport-util-concurrent</groupId>
+        <artifactId>backport-util-concurrent</artifactId>
+        <version>${backport-util-concurrent-version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <properties>
+    <siteId>activeio</siteId>
+    <projectName>Apache ActiveMQ ActiveIO</projectName>
+    <!-- base url for site deployment.  See distribution management for full url.  Override this in settings.xml for staging -->
+    <staging.siteURL>scp://people.apache.org/x1/www/activemq.apache.org</staging.siteURL>
+    
     <geronimo-version>1.0</geronimo-version>
     <howl-version>0.1.8</howl-version>
     <commons-beanutils-version>1.6.1</commons-beanutils-version>
@@ -113,99 +129,182 @@
     <log4j-version>1.2.12</log4j-version>
     <mx4j-version>2.1.1</mx4j-version>
     <commons-logging-version>1.1</commons-logging-version>
+    <backport-util-concurrent-version>2.1</backport-util-concurrent-version>
 
-    <m1-dist-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-dist-repo-url>
-    <dist-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</dist-repo-url>
-    <site-repo-url>scpexe://people.apache.org/www/incubator.apache.org/activemq/activeio-maven/</site-repo-url>
+    <!--<dist-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</dist-repo-url>-->
+    <!--<site-repo-url>scpexe://people.apache.org/www/incubator.apache.org/activemq/activeio-maven/</site-repo-url>-->
+    <!-- OSGi bundles properties -->
+    <activeio.osgi.import.pkg>*</activeio.osgi.import.pkg>
+    <activeio.osgi.export.pkg>org.apache.activeio*</activeio.osgi.export.pkg>
+    <activeio.osgi.private.pkg>!*</activeio.osgi.private.pkg>
+    <activeio.osgi.export>${activeio.osgi.export.pkg}*;version=${activeio.osgi.export.version}</activeio.osgi.export>
+    <activeio.osgi.export.version>${project.version}</activeio.osgi.export.version>
+    <activeio.osgi.import>${activeio.osgi.import.pkg}</activeio.osgi.import>
+    <activeio.osgi.symbolic.name>${groupId}.${artifactId}</activeio.osgi.symbolic.name>
   </properties>
 
-  <ciManagement>
-    <system>continuum</system>
-    <url>http://ci.gbuild.org/continuum</url>
-    <notifiers>
-      <notifier>
-        <configuration>
-          <address>activemq-commits@geronimo.apache.org</address>
-        </configuration>
-      </notifier>
-      <notifier>
-        <type>irc</type>
-        <configuration>
-          <host>irc.codehaus.org</host>
-          <port>6667</port>
-          <channel>#activemq</channel>
-        </configuration>
-      </notifier>
-    </notifiers>
-  </ciManagement>
-
-  <repositories>
-    <repository>
-      <id>central</id>
-      <url>http://ibiblio.org/maven2/</url>
-    </repository>
-    <repository>
-      <id>apache.incubating.releases</id>
-      <name>Apache Incubating Release Distribution Repository</name>
-      <url>http://people.apache.org/repo/m2-incubating-repository</url>
-    </repository>
-    <repository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-  </repositories>
-      
-  <pluginRepositories>
-    <pluginRepository>
-      <id>apache.incubating.releases</id>
-      <name>Apache Incubating Release Distribution Repository</name>
-      <url>http://people.apache.org/repo/m2-incubating-repository</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
-
   <distributionManagement>
-    <repository>
-      <id>apache.incubating.releases</id>
-      <name>Apache Incubating Release Distribution Repository</name>
-      <url>${dist-repo-url}</url>
-    </repository>
-    <snapshotRepository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>scp://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</url>
-    </snapshotRepository>
     <site>
-      <id>apache.website</id>
-      <url>${site-repo-url}</url>
+      <id>activeio.website</id>
+      <!-- set the staging.siteURL in your ~/.m2/settings.xml in a release or other profile -->
+      <url>${staging.siteURL}/${siteId}/maven/${version}</url>
+      <!--<url>${site-repo-url}</url>-->
     </site>
   </distributionManagement>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/activemq/activeio/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/activemq/activeio/trunk</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/activemq/activeio/trunk</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/activemq/activeio/branches/activeio-3.0</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/activemq/activeio/branches/activeio-3.0</developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/activemq/activeio/branches/activeio-3.0</url>
   </scm>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.0.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <downloadSources>true</downloadSources>
+            <downloadJavadocs>true</downloadJavadocs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>1.0-alpha-4</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.0-beta-7</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <version>1.0</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>process</goal>
+              </goals>
+              <configuration>
+                <properties>
+                  <projectName>${projectName}</projectName>
+                </properties>
+                <resourceBundles>
+                  <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
+                </resourceBundles>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>2.0.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-stage-plugin</artifactId>
+          <version>1.0-alpha-1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.4.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>1.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.geronimo.genesis.plugins</groupId>
+          <artifactId>tools-maven-plugin</artifactId>
+          <version>1.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>rat-maven-plugin</artifactId>
+          <version>1.0-alpha-3</version>
+          <configuration>
+            <excludeSubProjects>false</excludeSubProjects>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <index>true</index>
+            <compress>true</compress>
+            <manifestEntries>
+              <Implementation-Vendor>Apache Software Foundation</Implementation-Vendor>
+              <Implementation-Vendor-Id>org.apache</Implementation-Vendor-Id>
+
+              <Package>org.apache.activeio</Package>
+              <Extension-Name>${project.artifactId}</Extension-Name>
+              <Implementation-Version>${project.version}</Implementation-Version>
+
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-Name>${artifactId}</Bundle-Name>
+            <Bundle-SymbolicName>${activeio.osgi.symbolic.name}</Bundle-SymbolicName>
+            <Export-Package>${activeio.osgi.export}</Export-Package>
+            <Import-Package>${activeio.osgi.import}</Import-Package>
+            <Private-Package>${activeio.osgi.private.pkg}</Private-Package>
+            <Implementation-Title>Apache ActiveIO</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+          </instructions>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.4</source>
-          <target>1.4</target>
+          <source>1.5</source>
+          <target>1.5</target>
         </configuration>
       </plugin>
       <plugin>
@@ -216,20 +315,41 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-one-plugin</artifactId>
-        <version>1.0</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rat-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.geronimo.genesis.plugins</groupId>
+        <artifactId>tools-maven-plugin</artifactId>
         <executions>
           <execution>
+            <id>verify-legal-files</id>
+            <phase>verify</phase>
             <goals>
-              <goal>install-maven-one-repository</goal>
-              <goal>deploy-maven-one-repository</goal>
+              <goal>verify-legal-files</goal>
             </goals>
             <configuration>
-              <remoteRepositoryId>apache.m1.releases</remoteRepositoryId>
-              <remoteRepositoryUrl>${m1-dist-repo-url}</remoteRepositoryUrl>
+              <!-- Fail the build if no legal files were found -->
+              <strict>true</strict>
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-stage-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
@@ -237,7 +357,18 @@
   <reporting>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <links>
+            <link>http://java.sun.com/j2ee/1.5/docs/api</link>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+          </links>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -245,15 +376,11 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -263,17 +390,129 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>taglist-maven-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <links>
-            <link>http://java.sun.com/j2ee/1.4/docs/api</link>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-          </links>
-        </configuration>
-      </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+
+    <profile>
+      <id>release</id>
+
+      <build>
+        <plugins>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <configuration>
+              <useReleaseProfile>false</useReleaseProfile>
+              <goals>deploy</goals>
+              <arguments>-Prelease</arguments>
+            </configuration>
+          </plugin>
+
+          <!-- We want a source jar -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <inherited>true</inherited>
+            <configuration>
+              <passphrase>${gpg.passphrase}</passphrase>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <!-- We want to deploy the artifact to a staging location for perusal -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <inherited>true</inherited>
+            <configuration>
+              <altDeploymentRepository>${deploy.altRepository}</altDeploymentRepository>
+              <updateReleaseInfo>true</updateReleaseInfo>
+            </configuration>
+          </plugin>
+
+          <!-- We want the JavaDoc JAR published with the release -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <inherited>true</inherited>
+            <configuration>
+              <source>1.5</source>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>full</id>
+
+      <build>
+        <plugins>
+
+          <!-- We want a source jar -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <!-- We want the JavaDoc JAR published with the release -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <inherited>true</inherited>
+            <configuration>
+              <source>1.5</source>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
 
 </project>
