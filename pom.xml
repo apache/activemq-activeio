@@ -9,7 +9,7 @@
 
   <groupId>org.apache.activemq</groupId>
   <artifactId>activeio-parent</artifactId>
-  <version>3.1.0</version>
+  <version>3.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ActiveIO</name>
   <description />
@@ -135,9 +135,9 @@
   </distributionManagement>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/activemq/activeio/tags/activeio-3.1.0</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/activemq/activeio/tags/activeio-3.1.0</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/activemq/activeio/tags/activeio-3.1.0</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/activemq/activeio/branches/activeio-3.0</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/activemq/activeio/branches/activeio-3.0</developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/activemq/activeio/branches/activeio-3.0</url>
   </scm>
 
   <build>
