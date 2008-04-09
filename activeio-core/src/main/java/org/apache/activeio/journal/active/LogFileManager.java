@@ -105,7 +105,8 @@ final public class LogFileManager {
     }
 
     void initialize(int onlineLogFileCount) throws IOException {
-
+      try
+      {
         LogFileNode logFiles[] = new LogFileNode[onlineLogFileCount];
 
         // Create the log directory if it does not exist.
@@ -176,6 +177,12 @@ final public class LogFileManager {
                     
         loadedFromCleanShutDown = false;
         storeState();
+      }
+      catch (JournalLockedException e)
+      {
+        controlFile.dispose();
+        throw e;
+      }
     }
 
     private void checkAppendLog() throws IOException {
