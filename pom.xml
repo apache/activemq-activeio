@@ -9,7 +9,7 @@
 
   <groupId>org.apache.activemq</groupId>
   <artifactId>activeio-parent</artifactId>
-  <version>3.1.1</version>
+  <version>3.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ActiveIO</name>
   <description />
