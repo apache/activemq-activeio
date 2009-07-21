@@ -216,11 +216,11 @@
         <configuration>
           <instructions>
             <Bundle-Name>${artifactId}</Bundle-Name>
-            <Bundle-SymbolicName>${activemq.osgi.symbolic.name}</Bundle-SymbolicName>
-            <Export-Package>${activemq.osgi.export}</Export-Package>
-            <Import-Package>${activemq.osgi.import}</Import-Package>
-            <Private-Package>${activemq.osgi.private.pkg}</Private-Package>
-            <Implementation-Title>Apache ActiveMQ</Implementation-Title>
+            <Bundle-SymbolicName>${activeio.osgi.symbolic.name}</Bundle-SymbolicName>
+            <Export-Package>${activeio.osgi.export}</Export-Package>
+            <Import-Package>${activeio.osgi.import}</Import-Package>
+            <Private-Package>${activeio.osgi.private.pkg}</Private-Package>
+            <Implementation-Title>Apache ActiveIO</Implementation-Title>
             <Implementation-Version>${project.version}</Implementation-Version>
           </instructions>
         </configuration>
