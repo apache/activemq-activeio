@@ -80,16 +80,17 @@
     
     <howl-version>0.1.8</howl-version>
     <commons-logging-version>1.1</commons-logging-version>
-    <felix-version>1.0.0</felix-version>
+    <felix-version>2.1.0</felix-version>
 
     <!-- OSGi bundles properties -->
     <activeio.osgi.import.pkg>*</activeio.osgi.import.pkg>
     <activeio.osgi.export.pkg>org.apache.activeio*</activeio.osgi.export.pkg>
     <activeio.osgi.private.pkg>!*</activeio.osgi.private.pkg>
-    <activeio.osgi.export>${activeio.osgi.export.pkg}*;version=${activeio.osgi.export.version}</activeio.osgi.export>
+    <activeio.osgi.export>${activeio.osgi.export.pkg}*;version=${activeio.osgi.export.version};-noimport:=true</activeio.osgi.export>
     <activeio.osgi.export.version>${project.version}</activeio.osgi.export.version>
     <activeio.osgi.import>${activeio.osgi.import.pkg}</activeio.osgi.import>
     <activeio.osgi.symbolic.name>${groupId}.${artifactId}</activeio.osgi.symbolic.name>
+    <activeio.osgi.dynamic.import />
   </properties>
 
   <distributionManagement>
@@ -236,6 +237,7 @@
             <Bundle-SymbolicName>${activeio.osgi.symbolic.name}</Bundle-SymbolicName>
             <Export-Package>${activeio.osgi.export}</Export-Package>
             <Import-Package>${activeio.osgi.import}</Import-Package>
+            <DynamicImport-Package>${activeio.osgi.dynamic.import}</DynamicImport-Package>
             <Private-Package>${activeio.osgi.private.pkg}</Private-Package>
             <Implementation-Title>Apache ActiveIO</Implementation-Title>
             <Implementation-Version>${project.version}</Implementation-Version>
