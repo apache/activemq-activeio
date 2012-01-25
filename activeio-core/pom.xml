@@ -30,7 +30,7 @@
   <description>A high performance IO abstraction framework</description>
   <properties>
       <activeio.osgi.import.pkg>
-          org.objectweb.howl.log*;resolution=optional,
+          org.objectweb.howl.log*;resolution:=optional,
           *
       </activeio.osgi.import.pkg>
   </properties>      
