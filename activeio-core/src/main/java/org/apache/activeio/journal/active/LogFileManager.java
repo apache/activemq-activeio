@@ -144,6 +144,7 @@ final public class LogFileManager {
         // Find the first active node
         for (int i = 0; i < onlineLogFileCount; i++) {
             if( logFiles[i].isActive() ) {
+                activeLogFileCount.incrementAndGet();
                 if( firstActiveNode == null || logFiles[i].getId() < firstActiveNode.getId() ) {
                     firstActiveNode = logFiles[i];
                 }
